@@ -1,0 +1,131 @@
+<%@page import="project.ConnectionProvider" %>
+<%@page import="java.sql.*" %>
+
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page pageEncoding="UTF-8" %>
+<%
+try{
+Connection con = ConnectionProvider.getCon();
+Statement st= con.createStatement();
+
+
+String ql="create table admin (admin_ID int auto_increment unique,admin_name VARCHAR(100),admin_last_name VARCHAR(100),email VARCHAR(100) PRIMARY KEY,admin_phone VARCHAR(100),Security_Question VARCHAR(100),admin_answer VARCHAR(100),password VARCHAR(100),admin_date date);";
+String q2="CREATE TABLE customer (customer_ID int auto_increment unique,email VARCHAR(100) PRIMARY KEY,customer_name VARCHAR(100)  ,customer_last_name VARCHAR(100),Security_Question VARCHAR(100)  ,customer_answer VARCHAR(100),customer_date date,password VARCHAR(100)  );";
+String q3="CREATE TABLE product_category (category_name VARCHAR(100) PRIMARY KEY,category_ID int auto_increment , unique (category_ID));";
+String q4="CREATE TABLE product (product_name VARCHAR(100)  ,product_price int(50)  ,product_size VARCHAR(100),product_attribute VARCHAR(100),product_mark VARCHAR(100) ,product_photo VARCHAR(100),product_active varchar(3)  ,product_ID INT auto_increment,product_benefit int(50),category_name varchar(50) ,PRIMARY KEY (product_ID),FOREIGN KEY (category_name) REFERENCES product_category(category_name));";
+String q40="alter  table product alter column product_active set default 'yes';";
+String q5="CREATE TABLE shipment (shipment_ID int auto_increment PRIMARY KEY,customer_country VARCHAR(100) , customer_city VARCHAR(100) ,customer_address VARCHAR(500) ,customer_phone VARCHAR(100),shipment_date DATE  ,customer_ID int,FOREIGN KEY (customer_ID) REFERENCES customer(customer_ID));";
+
+String q6="CREATE TABLE cart (cart_ID INT not null ,quantity_cart INT,total_price_cart DECIMAL(10,2),orderDate date,deliveryDate date,customer_ID INT, product_ID INT, FOREIGN KEY (product_ID) REFERENCES product(product_ID),FOREIGN KEY (customer_ID) REFERENCES customer(customer_ID));";
+
+String q7="CREATE TABLE wishlist (wishlist_ID INT auto_increment PRIMARY KEY,arraylist_ID int,product_ID int ,FOREIGN KEY (product_ID) REFERENCES product(product_ID));";
+String q8="CREATE TABLE payment (payment_ID INT auto_increment PRIMARY KEY,customer_ID int,amoung_payment DECIMAL(10,2),payment_date DATE ,deliveryDate DATE ,Due_Date DATE  ,payment_method varchar(100),FOREIGN KEY (customer_ID) REFERENCES customer(customer_ID));";
+String q9="CREATE TABLE orders (order_ID INT auto_increment PRIMARY KEY,order_date DATE  ,total_price_order int,customer_ID INT,payment_ID INT,shipment_ID INT,FOREIGN KEY (customer_ID) REFERENCES customer(customer_ID),FOREIGN KEY (shipment_ID) REFERENCES shipment(shipment_ID),FOREIGN KEY (payment_ID) REFERENCES payment(payment_ID));";
+String q10="CREATE TABLE order_item (item_ID INT auto_increment PRIMARY KEY,quantity_item int  ,price_item decimal(10,2),product_ID INT,order_ID INT,FOREIGN KEY (product_ID) REFERENCES product(product_ID),FOREIGN KEY (order_ID) REFERENCES orders(order_ID));";
+
+String q11="INSERT INTO admin (admin_name,admin_last_name,admin_phone,email,Security_Question,admin_answer,password,admin_date) VALUES (  'saeed', 'amini','0799999999','amini506750@gmail.com','what was your first car?','cars', '97b3650166ce2517ed20c1eb1567c1c8570832a16d239a3bb8762cc529b8fb71',now());";
+
+String q21="INSERT INTO customer (email,customer_name,customer_last_name,Security_Question,customer_answer,password,customer_date) VALUES (  'saeedamini506750@gmail.com', 'saeed', 'amini', 'what was your first car?','car', 'saeed',now());";
+String q22="INSERT INTO customer (email,customer_name,customer_last_name,Security_Question,customer_answer,password,customer_date) VALUES ('omideman50@gmail.com','omid', 'eman','what is the name of your first friend?', 'saeed', 'omid',now());";
+
+String q31="INSERT INTO  product_category (category_name,category_ID) VALUES (  'TV',1);";
+String q32="INSERT INTO  product_category (category_name,category_ID) VALUES (  'MACHIN',2);";
+String q41="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 10000, '40 inch', NULL, 'philips','TVV.jpg',100,'TV');";
+String q42="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 12000, '43 inch', NULL, 'philips','TVV.jpg',120,'TV');";
+String q43="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 14000, '50 inch', NULL, 'philips','TVV.jpg',140,'TV');";
+String q44="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 14500, '43 inch', 'smart', 'philips','TVV.jpg',145,'TV');";
+String q45="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 16000, '55 inch', NULL, 'philips','TVV.jpg',160,'TV');";
+String q46="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 35000, '65 inch', 'smart', 'AKAI','TVV.jpg',350,'TV');";
+String q47="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 35000, '65 inch', 'smart', 'EKO','TVV.jpg',350,'TV');";
+String q48="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 35000, '65 inch', 'smart', 'BLAUPUNKT','TVV.jpg',350,'TV');";
+String q49="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 11000, '32 inch', 'smart', 'TCL','TVV.jpg',110,'TV');";
+String q410="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 8000, '32 inch', NULL, 'panasonic','TVV.jpg',80,'TV');";
+String q411="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 8000, '32 inch', NULL, 'samsung','TVV.jpg',80,'TV');";
+String q412="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 8000, '32 inch', NULL, 'TOSHIBA','TVV.jpg',80,'TV');";
+String q413="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'TV', 8000, '32 inch', 'smart', 'LG','TVV.jpg',500,'TV');";
+String q414="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'MACHIN' ,14000, '7 kg', 'white', 'sumsung','machin7.jpg',140,'MACHIN');";
+String q415="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'MACHIN', 18000, '7.5 kg', 'white and whitnamy 2018', 'sumsung','machin7.jpg',180,'MACHIN');";
+String q416="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'MACHIN', 14500, '8 kg', 'white', 'sumsung','machin7.jpg',145,'MACHIN');";
+String q417="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'MACHIN', 15000, '9 kg','black','sumsung','machin7.jpg',150,'MACHIN');";
+String q418="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'MACHIN', 15000, '9 kg','white','sumsung','machin7.jpg',15000,'MACHIN');";
+String q419="INSERT INTO product (product_name,product_price,product_size,product_attribute,product_mark,product_photo,product_benefit,category_name) VALUES ( 'MACHIN', 15000, '12 kg','white','sumsung','machin7.jpg',15000,'MACHIN');";
+String q51=" INSERT INTO  shipment (customer_country,customer_city,customer_address,customer_phone,shipment_date) VALUES (  'afg','kabul','kabul_university','0791506750',now());";
+String q52=" INSERT INTO  shipment (customer_country,customer_city,customer_address,customer_phone,shipment_date) VALUES (  'afg','nimrooz','zerange','0799999999',now());";
+String q53=" INSERT INTO  shipment (customer_country,customer_city,customer_address,customer_phone,shipment_date) VALUES (  'afg','herat','park','0791111111',now());";
+
+String q61="INSERT INTO cart (cart_ID,quantity_cart,total_price_cart,customer_ID,product_ID,orderDate,deliveryDate) VALUES (1,1,15000, 1, 5,now(),DATE_ADD(orderDate,INTERVAL 10 DAY));";
+
+String q71="INSERT INTO wishList (arraylist_ID,product_ID) VALUES (1, 5);";
+
+String q81="INSERT INTO payment (customer_ID,amoung_payment,payment_method,payment_date,deliveryDate,Due_DATE) VALUES ( 1, 20000,'online_shopping',now(),DATE_ADD(payment_date,INTERVAL 10 DAY),DATE_ADD(payment_date,INTERVAL 30 DAY));";
+
+String q91="INSERT INTO orders (order_date,total_price_order,customer_ID,payment_ID,shipment_ID) VALUES ( now(), 100000, 1,1,1);";
+
+String q101="INSERT INTO order_item (quantity_item,price_item,product_ID,order_ID) VALUES(1,20000,1,1);";
+
+
+
+String q111="CREATE TABLE message (message_ID int auto_increment,email VARCHAR(100) ,subject VARCHAR(100),body_message VARCHAR(500),star varchar(1),message_date DATE, PRIMARY KEY (message_ID));";
+String q112="CREATE TABLE product_best (product_ID int not null,product_name VARCHAR(100)  ,product_price int(50)  ,product_size VARCHAR(100),product_attribute VARCHAR(100),product_mark VARCHAR(100) ,product_photo VARCHAR(100),category_name VARCHAR(100),product_best_ID INT auto_increment,PRIMARY KEY (product_best_ID));";
+
+st.execute(ql);
+st.execute(q2);
+st.execute(q3);
+st.execute(q4);
+st.execute(q40);
+st.execute(q5);
+st.execute(q6);
+st.execute(q7);
+st.execute(q8);
+st.execute(q9);
+st.execute(q10);
+st.execute(q11);
+st.execute(q21);
+st.execute(q22);
+st.execute(q31);
+st.execute(q32);
+
+
+st.execute(q41);
+st.execute(q42);
+st.execute(q43);
+st.execute(q44);
+st.execute(q45);
+st.execute(q46);
+st.execute(q47);
+st.execute(q48);
+st.execute(q49);
+st.execute(q410);
+st.execute(q411);
+st.execute(q412);
+st.execute(q413);
+st.execute(q414);
+st.execute(q415);
+st.execute(q416);
+st.execute(q417);
+st.execute(q418);
+
+st.execute(q51);
+st.execute(q52);
+st.execute(q53);
+st.execute(q61);
+
+st.execute(q71);
+
+st.execute(q81);
+
+st.execute(q91);
+
+st.execute(q101);
+
+st.execute(q111);
+st.execute(q112);
+System.out.print("TABLE CREATED");
+con.close();
+}
+catch(Exception e){
+System.out.print(e);
+}
+
+
+%>
